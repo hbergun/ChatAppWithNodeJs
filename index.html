@@ -3,14 +3,24 @@
 <head>
     <meta charset="utf-8" />
     <title>Web Socket</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="http://localhost:4000/socket.io/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-    const socket=io.connect('http://localhost:4000/');
-    socket.emit('SendHello',); //1.Parametre Sunucu Tarafında Karşılanacak Parametre
+        $(()=>{
+            const socket=io.connect('http://localhost:4000/');
+
+            socket.on('SayHello',()=>{
+                $('#Here').html('Burada Say Hello Yazar');
+            });
+            
+            $('button').on('click',()=>{
+                socket.emit('sendHello',{city:'İzmir' ,name:'Berk'}); //1.Parametre Sunucu Tarafında Karşılanacak Parametre 
+            });                                             //2. Paramtere Geçildi
+        });
     </script>
 </head>
 <body>
-    Html Page Error
+    <button>Send 'Hello' Message</button>
+    <div id="Here"></div>
 </body>
 </html>
