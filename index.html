@@ -8,19 +8,41 @@
     <script>
         $(()=>{
             const socket=io.connect('http://localhost:4000/');
+            $('button').on('click',()=>{
+                socket.emit('newUser',{name :$('#name').val()});
+            });
 
-            socket.on('SayHello',()=>{
-                $('#Here').html('Burada Say Hello Yazar');
+            socket.on('OtherUser',(userinfo)=>{
+                $('.users').append('<li><b>' + userinfo.name + "</b>: Chat'e Katıldı.</li>")
+            });
+
+            socket.on('userDisconnect',()=>{
+                $('.users').append('<li><b>' + 'Dila' + "</b>: Chat'den Ayrıldı.</li>") //Get User İnfo
+            });
+
+
+            /*socket.on('SayHello',()=>{
+                $('#Here').append('Burada Say Hello Yazar'+'<br>'); 
             });
             
             $('button').on('click',()=>{
                 socket.emit('sendHello',{city:'İzmir' ,name:'Berk'}); //1.Parametre Sunucu Tarafında Karşılanacak Parametre 
             });                                             //2. Paramtere Geçildi
+            */
         });
     </script>
 </head>
 <body>
     <button>Send 'Hello' Message</button>
     <div id="Here"></div>
+    <input id="name"/>
+    <button>Bağlan</button>
+    <br>
+    <ul class="users">
+        <li>
+
+        </li>
+    </ul>
+    
 </body>
 </html>
