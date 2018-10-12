@@ -7,17 +7,19 @@
     <script src="http://localhost:4000/socket.io/socket.io.js"></script>
     <script>
         $(()=>{
+            //var Names=prompt("Lütfen İsminizi Giriniz:","Harry Porter");
             const socket=io.connect('http://localhost:4000/');
             $('button').on('click',()=>{
-                socket.emit('newUser',{name :$('#name').val()});
+                socket.emit('newUser',$('#name').val());
             });
+
 
             socket.on('OtherUser',(userinfo)=>{
                 $('.users').append('<li><b>' + userinfo.name + "</b>: Chat'e Katıldı.</li>")
             });
 
-            socket.on('userDisconnect',()=>{
-                $('.users').append('<li><b>' + 'Dila' + "</b>: Chat'den Ayrıldı.</li>") //Get User İnfo
+            socket.on('userDisconnect',(username)=>{
+                $('.users').append('<li><b>' + username+ "</b>: Chat'den Ayrıldı.</li>") //Get User İnfo
             });
 
 

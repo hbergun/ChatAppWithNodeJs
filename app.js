@@ -7,7 +7,6 @@ const server=http.createServer((req,res)=>{ //Req
 server.listen(4000); //4000 Port
 
 const io=socketio.listen(server); //Server 4000-i Socket.io Serveri'dinliyor
-
 io.sockets.on('connection',(socket)=>{ //Socket Page'in Bize State Bildirimi
     console.log(socket.id+" ID 'Connected"); //Connection Durumunda Start
     //console.log(socket);
@@ -22,13 +21,14 @@ io.sockets.on('connection',(socket)=>{ //Socket Page'in Bize State Bildirimi
         },50000);*/
         
         socket.on('newUser',(data)=>{
-            console.log(data.name+" Chat'e Katıldı");
-            socket.broadcast.emit('OtherUser',{name:data.name});
+            socket.username=data;
+            console.log(data+" Chat'e Katıldı");
+            socket.broadcast.emit('OtherUser',{name:data});
         });
     
     socket.on('disconnect',()=>{
     console.log(socket.id+" ID 'Disconnected"); //Disconnect Durumunda Stop
-    socket.broadcast.emit('userDisconnect',{name:global.name}); //??
+    socket.broadcast.emit('userDisconnect',socket.username); //??
         });
         
    
