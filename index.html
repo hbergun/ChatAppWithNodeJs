@@ -3,48 +3,68 @@
 <head>
     <meta charset="utf-8" />
     <title>Web Socket</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!--BootStrap-->
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--BootStrap-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="http://localhost:4000/socket.io/socket.io.js"></script>
-    <script>
+    <style>
+        #leaveRoom{
+            display: none;
+        }
+    </style>
+  <script>
         $(()=>{
-            //var Names=prompt("Lütfen İsminizi Giriniz:","Harry Porter");
             const socket=io.connect('http://localhost:4000/');
-            $('button').on('click',()=>{
-                socket.emit('newUser',$('#name').val());
+            
+            $('#joinRoom').on('click',()=>{
+                socket.emit('joinRoom',{roomName:$('#roomName').val()});
             });
 
-
-            socket.on('OtherUser',(userinfo)=>{
-                $('.users').append('<li><b>' + userinfo.name + "</b>: Chat'e Katıldı.</li>")
+            $('#leaveRoom').on('click',()=>{
+                socket.emit('leaveRoom',{roomName:$('#roomName').val()});
             });
 
-            socket.on('userDisconnect',(username)=>{
-                $('.users').append('<li><b>' + username+ "</b>: Chat'den Ayrıldı.</li>") //Get User İnfo
-            });
-
-
-            /*socket.on('SayHello',()=>{
-                $('#Here').append('Burada Say Hello Yazar'+'<br>'); 
+            socket.on('newUserJoin',(data)=>{
+               $('#userCount').html('There are <b>'+data.userCount+'</b>'+' Users in This Room [Online].');
             });
             
-            $('button').on('click',()=>{
-                socket.emit('sendHello',{city:'İzmir' ,name:'Berk'}); //1.Parametre Sunucu Tarafında Karşılanacak Parametre 
-            });                                             //2. Paramtere Geçildi
-            */
+            socket.on('onlyUser',(data)=>{
+                    $('#onlyUser').html(data.message);
+                    $('#roomName , #joinRoom').attr('disabled','disabled'); //true or false prop or attr no matters
+                    $('#leaveRoom').show();
+            });
+        
+            socket.on('userLeave',(data)=>{
+               $('#userCount').html('There are <b>'+data.userCount+'</b>'+' Users in This Room [Online].');
+            });
+          
+            socket.on('onlyUserLeave',(data)=>{
+                    $('#onlyUser').html(data.message);
+                    $('#roomName , #joinRoom').removeAttr('disabled'); //true or false prop or attr no matters
+                    $('#leaveRoom').hide();
+                    $('#userCount').empty();
+            });
+            
+
         });
     </script>
 </head>
 <body>
-    <button>Send 'Hello' Message</button>
-    <div id="Here"></div>
-    <input id="name"/>
-    <button>Bağlan</button>
-    <br>
-    <ul class="users">
-        <li>
+   <!--<input id="roomName"/>-->
+   <input id="roomName"type="text" class="form-control" placeholder="Please Room Name">
 
-        </li>
-    </ul>
-    
+   <!--<button id="joinRoom">Join Room</button>-->
+   <button id="joinRoom" type="button" class="btn btn-success">Join Room</button>
+   <!--<button id="leaveRoom">Leave Room</button>-->
+   <button id="leaveRoom" type="button" class="btn btn-danger">Leave Room</button>
+   <div id="onlyUser"></div>
+   <div id="userCount"></div>
+   <div id="logs"></div>
 </body>
 </html>
