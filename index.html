@@ -20,7 +20,24 @@
     </style>
   <script>
         $(()=>{
-            const socket=io.connect('http://localhost:4000/');
+            const socket=io.connect('http://localhost:4000/', { 
+                reconnectionAttempts : 3, 
+                reconnectionDelay:3000, 
+                //reconnection:true //Bağlantı Kurulamazsa Tekrar Denensin Mi ?
+            });
+
+            socket.on('reconnect_attempt',()=>{
+                $('.reconnectStatus').html('<b>Trying to Reconnect...</b>');
+            });
+
+            socket.on('reconnect_error',()=>{
+                $('.reconnectStatus').html('<h1><b>Error Connection!</b></h1>');
+            });
+
+            socket.on('reconnect',()=>{
+                $('.reconnectStatus').html('<h1><b>Connection Succes!</b></h1>');
+                
+            });
             
             $('#joinRoom').on('click',()=>{
                 socket.emit('joinRoom',{roomName:$('#roomName').val()});
@@ -56,13 +73,10 @@
     </script>
 </head>
 <body>
-   <!--<input id="roomName"/>-->
    <input id="roomName"type="text" class="form-control" placeholder="Please Room Name">
-
-   <!--<button id="joinRoom">Join Room</button>-->
    <button id="joinRoom" type="button" class="btn btn-success">Join Room</button>
-   <!--<button id="leaveRoom">Leave Room</button>-->
    <button id="leaveRoom" type="button" class="btn btn-danger">Leave Room</button>
+   <div class="reconnectStatus"></div>
    <div id="onlyUser"></div>
    <div id="userCount"></div>
    <div id="logs"></div>

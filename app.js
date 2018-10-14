@@ -8,6 +8,8 @@ server.listen(4000); //4000 Port
 
 const io=socketio.listen(server); //Server 4000-i Socket.io Serveri'dinliyor
 
+//Object.Key(socket.rooms) ile bağlı bulunduğu odalar alınabilir.
+
 io.on('connection',(socket)=>{ //Socket Page'in Bize State Bildirimi
      socket.on('joinRoom',(data)=>{
       socket.join(data.roomName,()=>{ //join(roomname,callback)
@@ -24,7 +26,9 @@ io.on('connection',(socket)=>{ //Socket Page'in Bize State Bildirimi
     });
 });
 
-const getOnlineUserCount=(io,data)=> io.sockets.adapter.rooms[data.roomName].length;
-
+const getOnlineUserCount=(io,data)=> {
+  const rooms = io.sockets.adapter.rooms[data.roomName];
+  return rooms ? rooms.length : 0;
+}
 
     
